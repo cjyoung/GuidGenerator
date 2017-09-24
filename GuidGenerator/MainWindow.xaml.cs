@@ -32,11 +32,22 @@ namespace GuidGenerator
 
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
-            //only show when minimizing
-            if (this.WindowState == WindowState.Minimized)
+            switch (WindowState)
             {
-                ni.ShowBalloonTip(1, null, "Minimized to notifications area", ToolTipIcon.None);
+                case WindowState.Normal:
+                    ni.ContextMenu.MenuItems[0].Text = "Minimize";
+                    break;
+                case WindowState.Minimized:
+                    Hide();
+                    ni.ContextMenu.MenuItems[0].Text = "Restore";
+                    ni.ShowBalloonTip(1, null, "Minimized to notifications area", ToolTipIcon.None);
+                    break;
+                case WindowState.Maximized:
+                    break;
+                default:
+                    break;
             }
+
         }
 
         private void InitializeNotificationIcon()
@@ -110,23 +121,22 @@ namespace GuidGenerator
         {
             //minimize/restore on double-click
             ChangeWindowState();
-            
+
             //Trace.WriteLine("double click");
         }
 
         private void ChangeWindowState()
         {
-            //minimize/restore on double-click
             switch (WindowState)
             {
                 case WindowState.Normal:
                     WindowState = WindowState.Minimized;
-                    ni.ContextMenu.MenuItems[0].Text = "Restore";
+                    Hide();
                     break;
                 case WindowState.Minimized:
+                    Show();
                     WindowState = WindowState.Normal;
-                    ni.ContextMenu.MenuItems[0].Text = "Minimize";
-                    this.Activate();
+                    Activate();
                     break;
                 case WindowState.Maximized:
                     break;
